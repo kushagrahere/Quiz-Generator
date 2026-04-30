@@ -2,9 +2,6 @@
 
 QuizAI is a full-stack web application that instantly generates multiple-choice quizzes from any text or PDF document using AI. Built with React, Node.js, and powered by Groq's Llama 3 model.
 
-!\[QuizAI Banner](https://img.shields.io/badge/AI-Powered-blue?style=for-the-badge) !\[License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge) !\[Node](https://img.shields.io/badge/Node.js-v20+-brightgreen?style=for-the-badge)
-
-\---
 
 ## ✨ Features
 
