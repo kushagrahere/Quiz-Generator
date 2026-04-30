@@ -31,21 +31,22 @@ export default function QuizPlayer({ quizData, setResultsData }) {
   const question = quizData.questions[currentIdx];
   const total = quizData.questions.length;
 
-  const handleAnswer = (option) => {
+  const handleAnswer = (letter, optionText) => {
     if (isAnswered) return;
     
-    setSelectedAnswer(option);
+    setSelectedAnswer(letter);
     setIsAnswered(true);
     
     setAnswers(prev => [
       ...prev,
       {
         question: question.question,
-        selected: option,
+        selected: letter,
+        selectedText: optionText,
         correct: question.correct,
         explanation: question.explanation,
         options: question.options,
-        isCorrect: option === question.correct
+        isCorrect: letter === question.correct
       }
     ]);
   };
@@ -61,6 +62,7 @@ export default function QuizPlayer({ quizData, setResultsData }) {
       const finalAnswers = answers.length === total ? answers : [...answers, {
         question: question.question,
         selected: selectedAnswer,
+        selectedText: null,
         correct: question.correct,
         explanation: question.explanation,
         options: question.options,
@@ -122,20 +124,22 @@ export default function QuizPlayer({ quizData, setResultsData }) {
         <h2 className="text-2xl font-bold leading-relaxed">{question.question}</h2>
 
         <div className="space-y-4">
-          {question.options.map((opt, i) => (
+          {question.options.map((opt, i) => {
+            const letter = String.fromCharCode(65 + i);
+            return (
             <motion.button
               key={i}
               whileHover={!isAnswered ? { scale: 1.01 } : {}}
               whileTap={!isAnswered ? { scale: 0.99 } : {}}
-              onClick={() => handleAnswer(opt)}
+              onClick={() => handleAnswer(letter, opt)}
               disabled={isAnswered}
-              className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-300 flex justify-between items-center ${getOptionStyle(opt)}`}
+              className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-300 flex justify-between items-center ${getOptionStyle(letter)}`}
             >
-              <span>{opt}</span>
-              {isAnswered && opt === question.correct && <CheckCircle2 className="text-emerald-500 w-6 h-6" />}
-              {isAnswered && opt === selectedAnswer && selectedAnswer !== question.correct && <XCircle className="text-rose-500 w-6 h-6" />}
+              <span>{letter}) {opt}</span>
+              {isAnswered && letter === question.correct && <CheckCircle2 className="text-emerald-500 w-6 h-6" />}
+              {isAnswered && letter === selectedAnswer && selectedAnswer !== question.correct && <XCircle className="text-rose-500 w-6 h-6" />}
             </motion.button>
-          ))}
+          )})}
         </div>
 
         {isAnswered && (

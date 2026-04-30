@@ -95,15 +95,17 @@ export default function Results({ resultsData }) {
           <div key={idx} className="glass-panel p-6 border-l-4" style={{ borderLeftColor: q.isCorrect ? '#10b981' : '#f43f5e' }}>
             <p className="font-bold mb-4">{idx + 1}. {q.question}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-              {q.options.map((opt, i) => (
+              {q.options.map((opt, i) => {
+                const letter = String.fromCharCode(65 + i);
+                return (
                 <div key={i} className={`p-3 rounded-lg border ${
-                  opt === q.correct ? 'bg-emerald-500/20 border-emerald-500 text-emerald-100' : 
-                  opt === q.selected && !q.isCorrect ? 'bg-rose-500/20 border-rose-500 text-rose-100' : 
+                  letter === q.correct ? 'bg-emerald-500/20 border-emerald-500 text-emerald-100' : 
+                  letter === q.selected && !q.isCorrect ? 'bg-rose-500/20 border-rose-500 text-rose-100' : 
                   'bg-slate-800 border-slate-700 text-gray-400'
                 }`}>
-                  {opt}
+                  {letter}) {opt}
                 </div>
-              ))}
+              )})}
             </div>
             <p className="text-sm text-gray-400 mt-2"><span className="font-semibold text-gray-300">Explanation:</span> {q.explanation}</p>
           </div>
