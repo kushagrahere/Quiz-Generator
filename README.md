@@ -140,7 +140,6 @@ This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgements
 
-* Built with [Google Antigravity](https://antigravity.google) agentic IDE
 * AI powered by [Groq](https://groq.com) — free and blazing fast
 * UI components styled with [Tailwind CSS](https://tailwindcss.com)
 
