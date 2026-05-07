@@ -12,9 +12,9 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-background text-gray-100 font-sans flex flex-col">
+      <div className="min-h-screen flex flex-col">
         <Navbar />
-        <main className="flex-grow container mx-auto px-4 py-8 max-w-4xl">
+        <main className="flex-grow w-full">
           <Routes>
             <Route path="/" element={<Home setQuizData={setQuizData} />} />
             <Route path="/quiz" element={<QuizPlayer quizData={quizData} setResultsData={setResultsData} />} />

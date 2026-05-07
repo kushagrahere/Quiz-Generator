@@ -48,90 +48,161 @@ export default function Home({ setQuizData }) {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-2xl mx-auto space-y-8"
-    >
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-          Generate Smart Quizzes in Seconds
-        </h1>
-        <p className="text-lg text-gray-400">
-          Upload your notes, articles, or lectures and let AI create a personalized quiz to test your knowledge.
-        </p>
-      </div>
+    <div className="relative min-h-screen hero-gradient flex flex-col">
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <section className="max-w-[1280px] mx-auto px-margin pt-xl pb-lg text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-600/10 border border-violet-500/20 text-violet-400 mb-base"
+          >
+            <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
+            <span className="text-label-sm font-label-sm uppercase tracking-widest">Next-Gen AI Engine</span>
+          </motion.div>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="font-h1 text-h1 text-white mb-md max-w-4xl mx-auto"
+          >
+            Turn Any Text Into a <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-primary">Quiz Instantly</span>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="font-body-lg text-body-lg text-secondary max-w-2xl mx-auto"
+          >
+            Paste notes, upload a PDF, and let AI generate 10 questions in seconds. Perfect for students, teachers, and corporate training.
+          </motion.p>
+        </section>
 
-      <div className="glass-panel p-8 space-y-6">
         {error && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-lg">
-            {error}
+          <div className="max-w-[1280px] mx-auto px-margin mb-6">
+            <div className="bg-error-container/20 border border-error/50 text-error p-4 rounded-lg flex items-center gap-3">
+              <span className="material-symbols-outlined">error</span>
+              {error}
+            </div>
           </div>
         )}
 
-        <div className="space-y-4">
-          <label className="block text-sm font-medium text-gray-300">
-            Option 1: Upload a PDF Document
-          </label>
-          <div className="relative border-2 border-dashed border-slate-600 rounded-xl p-8 hover:bg-slate-800/50 transition-colors flex flex-col items-center justify-center text-center cursor-pointer">
-            <input 
-              type="file" 
-              accept="application/pdf"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              onChange={(e) => {
-                setFile(e.target.files[0]);
-                setText('');
-              }}
-            />
-            <UploadCloud className="w-12 h-12 text-primary mb-3" />
-            {file ? (
-              <span className="text-emerald-400 font-medium">{file.name}</span>
-            ) : (
-              <>
-                <span className="text-gray-300 font-medium mb-1">Click to upload or drag and drop</span>
-                <span className="text-sm text-gray-500">PDF up to 10MB</span>
-              </>
-            )}
+        {/* Input Section */}
+        <section className="max-w-[1280px] mx-auto px-margin pb-xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+            {/* Text Input Card */}
+            <div className="glass-card rounded-xl p-md flex flex-col gap-sm">
+              <div className="flex items-center gap-2 mb-xs">
+                <span className="material-symbols-outlined text-primary">notes</span>
+                <h3 className="font-h3 text-h3 text-white">Paste Text</h3>
+              </div>
+              <textarea 
+                className="w-full h-64 bg-slate-950/40 border border-white/10 rounded-lg p-md text-body-md text-on-surface placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-transparent transition-all resize-none" 
+                placeholder="Paste your text, lecture notes, or article here..."
+                value={text}
+                onChange={(e) => {
+                  setText(e.target.value);
+                  if (e.target.value) setFile(null);
+                }}
+              ></textarea>
+            </div>
+
+            {/* PDF Upload Card */}
+            <div className="glass-card rounded-xl p-md flex flex-col gap-sm">
+              <div className="flex items-center gap-2 mb-xs">
+                <span className="material-symbols-outlined text-primary">picture_as_pdf</span>
+                <h3 className="font-h3 text-h3 text-white">Upload PDF</h3>
+              </div>
+              <label className="w-full h-64 border-2 border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center gap-4 hover:border-violet-500/50 hover:bg-white/5 transition-all cursor-pointer group relative">
+                <input 
+                  type="file" 
+                  accept="application/pdf"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  onChange={(e) => {
+                    setFile(e.target.files[0]);
+                    setText('');
+                  }}
+                />
+                <div className="w-16 h-16 rounded-full bg-violet-600/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined text-violet-400 text-3xl">upload_file</span>
+                </div>
+                <div className="text-center">
+                  {file ? (
+                    <p className="font-body-md text-emerald-400">{file.name}</p>
+                  ) : (
+                    <>
+                      <p className="font-body-md text-white">Drag & drop your PDF here</p>
+                      <p className="font-label-sm text-slate-500 mt-1">or click to browse from files</p>
+                    </>
+                  )}
+                </div>
+              </label>
+            </div>
           </div>
-        </div>
 
-        <div className="relative flex py-2 items-center">
-          <div className="flex-grow border-t border-slate-600"></div>
-          <span className="flex-shrink-0 mx-4 text-slate-500 text-sm">OR</span>
-          <div className="flex-grow border-t border-slate-600"></div>
-        </div>
+          {/* Action Button */}
+          <div className="mt-xl flex justify-center">
+            <button 
+              onClick={handleGenerate}
+              disabled={loading || (!text && !file)}
+              className="group relative inline-flex items-center gap-3 bg-primary-container text-white px-12 py-5 rounded-full font-h3 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_30px_rgba(124,58,237,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  Generate Quiz ⚡
+                  <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </>
+              )}
+            </button>
+          </div>
+        </section>
 
-        <div className="space-y-4">
-          <label className="block text-sm font-medium text-gray-300 flex items-center gap-2">
-            <FileText className="w-4 h-4" /> Option 2: Paste Raw Text
-          </label>
-          <textarea
-            className="w-full bg-slate-800/50 border border-slate-600 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
-            rows={6}
-            placeholder="Paste your study material here..."
-            value={text}
-            onChange={(e) => {
-              setText(e.target.value);
-              if (e.target.value) setFile(null);
-            }}
-          />
-        </div>
+        {/* Stats Bar */}
+        <section className="border-t border-white/5 bg-slate-950/30 backdrop-blur-md">
+          <div className="max-w-[1280px] mx-auto px-margin py-xl">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-lg text-center">
+              <div className="flex flex-col gap-2">
+                <span className="text-h2 font-h2 text-white">10,000+</span>
+                <span className="text-label-md font-label-md text-slate-400 uppercase tracking-widest">Quizzes Generated</span>
+              </div>
+              <div className="flex flex-col gap-2 border-y md:border-y-0 md:border-x border-white/10 py-md md:py-0">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="material-symbols-outlined text-violet-400">check_circle</span>
+                  <span className="text-h2 font-h2 text-white">Universal</span>
+                </div>
+                <span className="text-label-md font-label-md text-slate-400 uppercase tracking-widest">PDF & Text Support</span>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-h2 font-h2 text-white">Instant</span>
+                <span className="text-label-md font-label-md text-slate-400 uppercase tracking-widest">AI Results</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        <button
-          onClick={handleGenerate}
-          disabled={loading || (!text && !file)}
-          className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white font-bold py-4 px-8 rounded-xl transition-all transform active:scale-[0.98] flex justify-center items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-6 h-6 animate-spin" />
-              Generating Quiz...
-            </>
-          ) : (
-            'Generate Magic Quiz ✨'
-          )}
-        </button>
-      </div>
-    </motion.div>
+        {/* Illustration Placeholder */}
+        <div className="absolute top-1/4 -right-20 w-96 h-96 bg-violet-600/10 blur-[120px] rounded-full pointer-events-none z-[-1]"></div>
+        <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none z-[-1]"></div>
+      </main>
+
+      {/* Footer Component */}
+      <footer className="w-full py-8 px-12 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-950 border-t border-white/5 text-xs font-['Inter'] mt-auto">
+        <div className="flex flex-col gap-1 items-center md:items-start">
+          <span className="text-sm font-semibold text-slate-300">QuizAI ⚡</span>
+          <p className="text-slate-500">© 2024 QuizAI. Precision AI Generation.</p>
+        </div>
+        <div className="flex gap-8">
+          <a href="#" className="text-slate-500 hover:text-violet-400 transition-colors">Privacy Policy</a>
+          <a href="#" className="text-slate-500 hover:text-violet-400 transition-colors">Terms of Service</a>
+          <a href="#" className="text-slate-500 hover:text-violet-400 transition-colors">API Docs</a>
+          <a href="#" className="text-slate-500 hover:text-violet-400 transition-colors">Support</a>
+        </div>
+      </footer>
+    </div>
   );
 }

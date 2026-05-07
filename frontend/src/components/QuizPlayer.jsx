@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Timer, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 
 export default function QuizPlayer({ quizData, setResultsData }) {
   const navigate = useNavigate();
@@ -82,95 +81,163 @@ export default function QuizPlayer({ quizData, setResultsData }) {
 
   const getOptionStyle = (opt) => {
     if (!isAnswered) {
-      return selectedAnswer === opt 
-        ? "bg-primary/20 border-primary" 
-        : "bg-card border-slate-600 hover:border-primary/50 hover:bg-slate-800";
+      return {
+        button: "border border-white/10 hover:border-white/20 hover:bg-white/10 active-scale",
+        circle: "bg-white/10 text-slate-300",
+        text: "text-slate-300",
+        icon: null
+      };
     }
     
     if (opt === question.correct) {
-      return "bg-emerald-500/20 border-emerald-500 text-emerald-100";
+      return {
+        button: "border-2 border-[#22c55e] bg-[#22c55e]/10",
+        circle: "bg-[#22c55e] text-white",
+        text: "text-white",
+        icon: { name: "check_circle", color: "text-[#22c55e]" }
+      };
     }
+    
     if (opt === selectedAnswer && selectedAnswer !== question.correct) {
-      return "bg-rose-500/20 border-rose-500 text-rose-100";
+      return {
+        button: "border-2 border-[#ef4444] bg-[#ef4444]/10",
+        circle: "bg-[#ef4444] text-white",
+        text: "text-white",
+        icon: { name: "cancel", color: "text-[#ef4444]" }
+      };
     }
-    return "bg-card/50 border-slate-700 opacity-50";
+    
+    return {
+      button: "border border-white/10 opacity-50",
+      circle: "bg-white/10 text-slate-300",
+      text: "text-slate-300",
+      icon: null
+    };
   };
 
+  const timerDashOffset = 283 - (283 * timeLeft) / 30;
+
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div className="text-gray-400 font-medium">
-          Question {currentIdx + 1} of {total}
-        </div>
-        <div className={`flex items-center gap-2 font-bold px-4 py-2 rounded-full border ${timeLeft <= 5 ? 'bg-rose-500/20 border-rose-500 text-rose-400' : 'bg-slate-800 border-slate-600 text-slate-300'}`}>
-          <Timer className="w-4 h-4" />
-          {timeLeft}s
-        </div>
-      </div>
-
-      <div className="w-full bg-slate-800 rounded-full h-2 mb-8">
-        <div 
-          className="bg-primary h-2 rounded-full transition-all duration-300" 
-          style={{ width: `${((currentIdx + 1) / total) * 100}%` }}
-        ></div>
-      </div>
-
-      <motion.div 
-        key={currentIdx}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="glass-panel p-8 space-y-8"
-      >
-        <h2 className="text-2xl font-bold leading-relaxed">{question.question}</h2>
-
-        <div className="space-y-4">
-          {question.options.map((opt, i) => {
-            const letter = String.fromCharCode(65 + i);
-            return (
-            <motion.button
-              key={i}
-              whileHover={!isAnswered ? { scale: 1.01 } : {}}
-              whileTap={!isAnswered ? { scale: 0.99 } : {}}
-              onClick={() => handleAnswer(letter, opt)}
-              disabled={isAnswered}
-              className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-300 flex justify-between items-center ${getOptionStyle(letter)}`}
-            >
-              <span>{letter}) {opt}</span>
-              {isAnswered && letter === question.correct && <CheckCircle2 className="text-emerald-500 w-6 h-6" />}
-              {isAnswered && letter === selectedAnswer && selectedAnswer !== question.correct && <XCircle className="text-rose-500 w-6 h-6" />}
-            </motion.button>
-          )})}
-        </div>
-
-        {isAnswered && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`p-4 rounded-xl border ${selectedAnswer === question.correct ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-rose-500/10 border-rose-500/30'}`}
-          >
-            <h3 className="font-bold flex items-center gap-2 mb-2">
-              {selectedAnswer === question.correct ? (
-                <><CheckCircle2 className="text-emerald-400" /> Correct!</>
-              ) : (
-                <><XCircle className="text-rose-400" /> Incorrect</>
-              )}
-            </h3>
-            <p className="text-gray-300">{question.explanation}</p>
-          </motion.div>
-        )}
-
-        {isAnswered && (
-          <div className="flex justify-end pt-4">
-            <button
-              onClick={handleNext}
-              className="bg-primary hover:bg-indigo-500 text-white font-bold py-3 px-8 rounded-xl transition-all flex items-center gap-2"
-            >
-              {currentIdx < total - 1 ? 'Next Question' : 'View Results'}
-              <ArrowRight className="w-5 h-5" />
+    <main className="max-w-[1280px] mx-auto px-margin py-lg min-h-[calc(100vh-140px)]">
+      <div className="flex flex-col lg:flex-row gap-gutter">
+        {/* Side Navigation Shell Placeholder */}
+        <aside className="hidden lg:flex flex-col w-64 shrink-0 gap-base h-fit sticky top-24">
+          <div className="p-md glass-card rounded-xl mb-md">
+            <div className="flex items-center gap-sm mb-base">
+              <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white">
+                <span className="material-symbols-outlined">bolt</span>
+              </div>
+              <div>
+                <p className="font-bold text-violet-500">QuizAI Pro</p>
+                <p className="text-[10px] text-slate-500 uppercase tracking-widest">AI Generator Active</p>
+              </div>
+            </div>
+            <button className="w-full py-sm bg-violet-600/20 text-violet-400 rounded-lg text-sm font-semibold hover:bg-violet-600/30 transition-all">
+              Upgrade to Pro
             </button>
           </div>
-        )}
-      </motion.div>
-    </div>
+        </aside>
+
+        {/* Main Quiz Area */}
+        <section className="flex-1">
+          {/* Progress Header */}
+          <div className="flex items-center justify-between mb-lg">
+            <div className="flex-1 mr-xl">
+              <div className="flex justify-between items-end mb-base">
+                <span className="text-h3 font-h3 text-on-surface">Question {currentIdx + 1} <span className="text-slate-500 font-normal text-body-md">of {total}</span></span>
+                <span className="text-label-md text-violet-400 font-bold uppercase tracking-wider">{quizData.topic || 'Quiz'}</span>
+              </div>
+              <div className="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+                <div 
+                  className="bg-primary-container h-full shadow-[0px_0px_10px_rgba(124,58,237,0.5)] transition-all duration-300"
+                  style={{ width: `${((currentIdx + 1) / total) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+            {/* Timer Circle */}
+            <div className="relative w-16 h-16 flex items-center justify-center">
+              <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle className="text-white/5" cx="50" cy="50" fill="none" r="45" stroke="currentColor" strokeWidth="8"></circle>
+                <circle className="text-violet-500 transition-all duration-1000 ease-linear" cx="50" cy="50" fill="none" r="45" stroke="currentColor" strokeDasharray="283" strokeDashoffset={timerDashOffset} strokeWidth="8"></circle>
+              </svg>
+              <span className="text-h3 font-h3 text-white">{timeLeft}</span>
+            </div>
+          </div>
+
+          {/* Question Card */}
+          <motion.div 
+            key={currentIdx}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="glass-card p-xl rounded-xl mb-gutter"
+          >
+            <h1 className="text-h2 font-h2 text-white mb-lg leading-tight">{question.question}</h1>
+            <div className="grid grid-cols-1 gap-base">
+              {question.options.map((opt, i) => {
+                const letter = String.fromCharCode(65 + i);
+                const style = getOptionStyle(letter);
+                
+                return (
+                  <button
+                    key={i}
+                    onClick={() => handleAnswer(letter, opt)}
+                    disabled={isAnswered}
+                    className={`w-full p-md glass-card rounded-xl text-left flex items-center justify-between transition-all ${style.button}`}
+                  >
+                    <div className="flex items-center gap-md">
+                      <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${style.circle}`}>
+                        {letter}
+                      </span>
+                      <span className={`text-body-lg font-medium ${style.text}`}>
+                        {opt}
+                      </span>
+                    </div>
+                    {style.icon && (
+                      <span className={`material-symbols-outlined ${style.icon.color}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                        {style.icon.name}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* Feedback Box */}
+          {isAnswered && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-violet-600/10 border border-violet-500/20 rounded-xl p-md flex items-start gap-md mb-xl"
+            >
+              <div className="mt-1">
+                <span className="material-symbols-outlined text-violet-400">info</span>
+              </div>
+              <div>
+                <p className="text-violet-100 text-body-md">
+                  <span className="font-bold text-violet-400">
+                    {selectedAnswer === question.correct ? '✓ Correct!' : '✗ Incorrect.'}
+                  </span>{' '}
+                  {question.explanation}
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Next Action */}
+          {isAnswered && (
+            <div className="flex justify-end">
+              <button
+                onClick={handleNext}
+                className="flex items-center gap-base bg-primary-container text-white px-lg py-md rounded-xl font-h3 hover:shadow-[0px_0px_20px_rgba(124,58,237,0.4)] transition-all active-scale"
+              >
+                {currentIdx < total - 1 ? 'Next Question' : 'View Results'}
+                <span className="material-symbols-outlined">arrow_forward</span>
+              </button>
+            </div>
+          )}
+        </section>
+      </div>
+    </main>
   );
 }

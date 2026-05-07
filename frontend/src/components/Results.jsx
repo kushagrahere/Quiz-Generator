@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, RefreshCw, Plus, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Results({ resultsData }) {
@@ -64,53 +63,136 @@ export default function Results({ resultsData }) {
     }
   };
 
+  const minutes = Math.floor(resultsData.timeTaken / 60);
+  const seconds = resultsData.timeTaken % 60;
+  const timeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+
+  const correctCount = questions.filter(q => q.isCorrect).length;
+  const wrongCount = total - correctCount;
+
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <motion.div 
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="glass-panel p-10 text-center space-y-6"
-      >
-        <Trophy className={`w-24 h-24 mx-auto ${percentage >= 70 ? 'text-yellow-400' : 'text-gray-400'}`} />
-        <h1 className="text-5xl font-black">{percentage}%</h1>
-        <p className="text-xl text-gray-300">You scored {score} out of {total}</p>
-        <p className="text-2xl font-medium text-primary">{message}</p>
-
-        <div className="flex justify-center gap-4 pt-6">
-          <button onClick={() => navigate('/quiz')} className="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-colors">
-            <RefreshCw className="w-5 h-5" /> Retake Quiz
-          </button>
-          <button onClick={() => navigate('/')} className="bg-primary hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-colors">
-            <Plus className="w-5 h-5" /> New Quiz
-          </button>
-          <button onClick={handleDownload} className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-colors">
-            <Download className="w-5 h-5" /> Download PDF
-          </button>
-        </div>
-      </motion.div>
-
-      <div id="quiz-report" className="space-y-6">
-        <h2 className="text-2xl font-bold mt-12 mb-6">Detailed Review</h2>
-        {questions.map((q, idx) => (
-          <div key={idx} className="glass-panel p-6 border-l-4" style={{ borderLeftColor: q.isCorrect ? '#10b981' : '#f43f5e' }}>
-            <p className="font-bold mb-4">{idx + 1}. {q.question}</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-              {q.options.map((opt, i) => {
-                const letter = String.fromCharCode(65 + i);
-                return (
-                <div key={i} className={`p-3 rounded-lg border ${
-                  letter === q.correct ? 'bg-emerald-500/20 border-emerald-500 text-emerald-100' : 
-                  letter === q.selected && !q.isCorrect ? 'bg-rose-500/20 border-rose-500 text-rose-100' : 
-                  'bg-slate-800 border-slate-700 text-gray-400'
-                }`}>
-                  {letter}) {opt}
-                </div>
-              )})}
-            </div>
-            <p className="text-sm text-gray-400 mt-2"><span className="font-semibold text-gray-300">Explanation:</span> {q.explanation}</p>
+    <main className="max-w-[1280px] mx-auto px-margin py-xl flex flex-col gap-xl w-full" id="quiz-report">
+      {/* Hero Section */}
+      <section className="flex flex-col items-center text-center gap-md">
+        <motion.div 
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="relative w-48 h-48 flex items-center justify-center rounded-full p-2 score-ring shadow-[0_0_30px_rgba(124,58,237,0.3)]"
+        >
+          <div className="w-full h-full bg-background rounded-full flex flex-col items-center justify-center border border-white/10">
+            <span className="text-h1 font-h1 text-white">{score}/{total}</span>
+            <span className="text-label-md font-label-md text-violet-400 uppercase tracking-widest">{percentage}% Score</span>
           </div>
-        ))}
-      </div>
-    </div>
+        </motion.div>
+        
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="bg-violet-600/20 border border-violet-500/30 px-6 py-2 rounded-full"
+        >
+          <span className="text-h3 font-h3 text-white">{message}</span>
+        </motion.div>
+      </section>
+
+      {/* Stats Row */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="glass-card p-md rounded-xl flex items-center gap-md">
+          <div className="bg-violet-500/10 p-3 rounded-lg">
+            <span className="material-symbols-outlined text-violet-500 text-3xl">timer</span>
+          </div>
+          <div>
+            <p className="text-label-sm font-label-sm text-slate-400">Time Taken</p>
+            <p className="text-h3 font-h3 text-white">{timeStr}</p>
+          </div>
+        </motion.div>
+        
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="glass-card p-md rounded-xl flex items-center gap-md">
+          <div className="bg-emerald-500/10 p-3 rounded-lg">
+            <span className="material-symbols-outlined text-emerald-500 text-3xl">check_circle</span>
+          </div>
+          <div>
+            <p className="text-label-sm font-label-sm text-slate-400">Correct</p>
+            <p className="text-h3 font-h3 text-white">{correctCount}</p>
+          </div>
+        </motion.div>
+        
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }} className="glass-card p-md rounded-xl flex items-center gap-md">
+          <div className="bg-rose-500/10 p-3 rounded-lg">
+            <span className="material-symbols-outlined text-rose-500 text-3xl">cancel</span>
+          </div>
+          <div>
+            <p className="text-label-sm font-label-sm text-slate-400">Wrong</p>
+            <p className="text-h3 font-h3 text-white">{wrongCount}</p>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Review Section */}
+      <section className="flex flex-col gap-md">
+        <h2 className="text-h2 font-h2 text-white">Question Review</h2>
+        <div className="flex flex-col gap-sm">
+          {questions.map((q, idx) => (
+            <motion.div 
+              initial={{ x: -20, opacity: 0 }} 
+              animate={{ x: 0, opacity: 1 }} 
+              transition={{ delay: 0.6 + (idx * 0.1) }}
+              key={idx} 
+              className={`glass-card p-md rounded-xl flex flex-col gap-sm border-l-4 ${q.isCorrect ? 'border-[#22c55e]' : 'border-[#ef4444]'}`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex gap-md items-start">
+                  <span className="text-label-md font-label-md text-slate-500 w-8 pt-1">#{idx + 1}</span>
+                  <p className="text-body-lg font-bold text-white">{q.question}</p>
+                </div>
+                <span className={`material-symbols-outlined ${q.isCorrect ? 'text-[#22c55e]' : 'text-[#ef4444]'}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                  {q.isCorrect ? 'check_circle' : 'cancel'}
+                </span>
+              </div>
+              
+              <div className="pl-14 grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                {q.options.map((opt, i) => {
+                  const letter = String.fromCharCode(65 + i);
+                  return (
+                    <div key={i} className={`p-3 rounded-lg border text-body-md ${
+                      letter === q.correct ? 'bg-[#22c55e]/20 border-[#22c55e] text-[#22c55e]' : 
+                      letter === q.selected && !q.isCorrect ? 'bg-[#ef4444]/20 border-[#ef4444] text-[#ef4444]' : 
+                      'bg-white/5 border-white/10 text-slate-300'
+                    }`}>
+                      {letter}) {opt}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="pl-14 mt-2">
+                <div className="bg-violet-600/10 border border-violet-500/20 rounded-lg p-3 text-sm text-violet-100 flex gap-2">
+                  <span className="material-symbols-outlined text-violet-400 text-lg">info</span>
+                  <p>
+                    <span className="font-bold text-violet-400">Explanation:</span> {q.explanation}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Actions */}
+      <section className="flex flex-col md:flex-row justify-center items-center gap-md pt-lg pb-xl" data-html2canvas-ignore="true">
+        <button onClick={() => navigate('/quiz')} className="w-full md:w-auto px-xl py-4 rounded-xl border border-violet-500 text-violet-400 font-bold hover:bg-violet-500/10 transition-colors active:scale-95 transform">
+          Retake Quiz
+        </button>
+        <button onClick={() => navigate('/')} className="w-full md:w-auto px-xl py-4 rounded-xl bg-violet-600 text-white font-bold hover:bg-violet-500 transition-colors shadow-lg shadow-violet-600/30 active:scale-95 transform">
+          Generate New Quiz
+        </button>
+        <button onClick={handleDownload} className="w-full md:w-auto px-xl py-4 rounded-xl border border-emerald-500 text-emerald-400 font-bold hover:bg-emerald-500/10 transition-colors active:scale-95 transform flex items-center justify-center gap-2">
+          <span className="material-symbols-outlined">download</span> Download PDF
+        </button>
+      </section>
+
+      {/* Visual Polish: Decorative Elements */}
+      <div className="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+      <div className="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+    </main>
   );
 }
